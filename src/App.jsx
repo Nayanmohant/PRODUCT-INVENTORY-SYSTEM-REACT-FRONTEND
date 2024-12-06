@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router'
 import './App.css'
 import Home from './pages/Home'
 import Add from './pages/Add'
-import Update from './pages/update'
+import Update from './pages/Update'
 import { useState } from 'react'
 
 function App() {
