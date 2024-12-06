@@ -1,0 +1,1 @@
+export const serverUrl='https://product-inventory-system-react-server.onrender.com'
