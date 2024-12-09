@@ -1,56 +1,71 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router'
-import {  updateProductApi } from '../../services/allApi';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-function Update({updateProduct,updateProductList}) {
-    const[addProducts,setAddproducts]=useState({
-        id:"",
-        name:"",
-        category:"",
-        price:"",
-        stock:"",
-        description:""
-    })
-    console.log(addProducts);
-  
- 
+import { Link, useParams } from 'react-router-dom'
 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { updateProductApi } from '../../services/allApi';
+function Update() {
+
+
+
+  const [data,setData]=useState({
+    name:"",
+    category:"",
+    price:"",
+    stock:"",
+    description:""
+  })
+  const {id}= useParams()
+
+
+  useEffect(()=>{
+    axios.get('https://product-inventory-system-react-server.onrender.com/products/'+id).then(res=>setData(res.data)).catch(err=>console.log(err));
+    
+    
+  },[])
+  console.log(data);
+
+
+  
+  const handlecancel=()=>{
+    setData({
+      name:"",
+      category:"",
+      price:"",
+      stock:"",
+      description:""
+    })
+  }
+
+ 
+  //  const handleupdate=()=>{
+  //   axios.put('https://product-inventory-system-react-server.onrender.com/products/'+id,data).then(res=>console.log(res).catch(err=>console.log(err)
+  //   )
+  //   )
+  //  }
+  
   const handleupdate=async()=>{
-    const {id,name,category,price,stock,description}=addProducts
+    const {name,category,price,stock,description}=data
     if(!name|| !category|| !price || !stock|| !description){
       toast.warning('please fill the form completely')
     }
     else{
 
 
-        const result =await updateProductApi(id,{name,category,price,stock,description})
-        if (result.status >= 200 && result.status < 300) {
-            toast.success('Product updated successfully');
-         updateProductList(result.data)
-          console.log(updatestatus);
-          
+
+   const result=await updateProductApi(data.id,data)
+  console.log(result);
+      if(result.status>=200 && result.status<300){
+        toast.success('product added sucessfully')
+      }
+
     
    
     }
 }
-  }
-  const handlecancel=()=>{
-    setAddproducts({
-        id:"",
-      name:"",
-      category:"",
-      price:"",
-      stock:"",
-      description:"",
-    })
-  }
-
-    useEffect(()=>{
-        if(updateProduct){
-        setAddproducts(updateProduct)}
-    },[updateProduct])
-
+  
+  
 
 
   return (
@@ -61,13 +76,17 @@ function Update({updateProduct,updateProductList}) {
         
   
       <div className='border border-success p-5 ' style={{height:480 ,width:400}}>
-      <input type='text' value={addProducts.name} className='form-control mb-3 border border-success' placeholder='Name of product' onChange={(e)=>setAddproducts({...addProducts,name:e.target.value})}/>
-      <input type='text' value={addProducts.category}  className='form-control mb-3 border border-success' placeholder='category' onChange={(e)=>setAddproducts({...addProducts,category:e.target.value})}/>
-      <input type='text' value={addProducts.price}  className='form-control mb-3 border border-success' placeholder='price'onChange={(e)=>setAddproducts({...addProducts,price:e.target.value})} />
-      <input type='text' value={addProducts.stock}  className='form-control mb-3 border border-success' placeholder='Stock quantity' onChange={(e)=>setAddproducts({...addProducts,stock:e.target.value})}/>
-      <input type='text' value={addProducts.description}  className='form-control mb-3 border border-success' placeholder='description' onChange={(e)=>setAddproducts({...addProducts,description:e.target.value})}/>
+      <input type='text' value={data.name} className='form-control mb-3 border border-success' placeholder='Name of product' onChange={(e)=>setData({...data,name:e.target.value})} />
+      <input type='text'  value={data.category}   className='form-control mb-3 border border-success' placeholder='category'
+      onChange={(e)=>setData({...data,category:e.target.value})} />
+      <input type='text'  value={data.price}   className='form-control mb-3 border border-success' placeholder='price'
+      onChange={(e)=>setData({...data,price:e.target.value})}/>
+      <input type='text' value={data.stock} className='form-control mb-3 border border-success' placeholder='Stock quantity'
+      onChange={(e)=>setData({...data,stock:e.target.value})} />
+      <input type='text'  value={data.description}    className='form-control mb-3 border border-success' placeholder='description'
+      onChange={(e)=>setData({...data,description:e.target.value})} />
       <div className='justify-content-center  d-flex gap-3'>
-       <button onClick={handleupdate} type='button' className='btn bg-success mt-4 text-white' >Update</button>
+       <Link to={'/'}><button onClick={()=>handleupdate(data)} type='button' className='btn bg-success mt-4 text-white' >Update</button></Link>
      
       
         <button onClick={handlecancel} type='button' className='btn bg-success mt-4 text-white '>clear</button>
